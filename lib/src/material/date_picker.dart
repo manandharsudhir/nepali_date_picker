@@ -105,6 +105,7 @@ Future<NepaliDateTime?> showMaterialDatePicker({
   String? errorInvalidText,
   String? fieldHintText,
   String? fieldLabelText,
+  final Widget Function(NepaliDateTime)? dayBuilder,
 }) async {
   initialDate = utils.dateOnly(initialDate);
   firstDate = utils.dateOnly(firstDate);
@@ -134,6 +135,7 @@ Future<NepaliDateTime?> showMaterialDatePicker({
     errorInvalidText: errorInvalidText,
     fieldHintText: fieldHintText,
     fieldLabelText: fieldLabelText,
+    dayBuilder: dayBuilder,
   );
 
   if (textDirection != null) {
@@ -178,6 +180,7 @@ class _DatePickerDialog extends StatefulWidget {
     this.errorInvalidText,
     this.fieldHintText,
     this.fieldLabelText,
+    this.dayBuilder,
   })  : initialDate = utils.dateOnly(initialDate),
         firstDate = utils.dateOnly(firstDate),
         lastDate = utils.dateOnly(lastDate),
@@ -200,6 +203,8 @@ class _DatePickerDialog extends StatefulWidget {
 
   /// The earliest allowable [NepaliDateTime] that the user can select.
   final NepaliDateTime firstDate;
+
+  final Widget Function(NepaliDateTime)? dayBuilder;
 
   /// The latest allowable [NepaliDateTime] that the user can select.
   final NepaliDateTime lastDate;
@@ -381,6 +386,7 @@ class _DatePickerDialogState extends State<_DatePickerDialog> {
         onDateChanged: _handleDateChanged,
         selectableDayPredicate: widget.selectableDayPredicate,
         initialCalendarMode: widget.initialCalendarMode,
+        dayBuilder: widget.dayBuilder,
       );
     }
 

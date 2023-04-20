@@ -72,6 +72,7 @@ class CalendarDatePicker extends StatefulWidget {
     required NepaliDateTime initialDate,
     required NepaliDateTime firstDate,
     required NepaliDateTime lastDate,
+    this.hasDropDownNextToMonth = false,
     NepaliDateTime? currentDate,
     required this.onDateChanged,
     this.onDisplayedMonthChanged,
@@ -136,6 +137,8 @@ class CalendarDatePicker extends StatefulWidget {
 
   /// Function to provide full control over which dates in the calendar can be selected.
   final common.SelectableDayPredicate? selectableDayPredicate;
+
+  final bool hasDropDownNextToMonth;
 
   @override
   _CalendarDatePickerState createState() => _CalendarDatePickerState();
@@ -292,25 +295,29 @@ class _CalendarDatePickerState extends State<CalendarDatePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        SizedBox(
-          height: _subHeaderHeight + _maxDayPickerHeight,
-          child: _buildPicker(),
-        ),
-        _DatePickerModeToggleButton(
-          mode: _mode,
-          title: NepaliDateFormat.yMMMM().format(_currentDisplayedMonthDate),
-          onTitlePressed: () {
-            // Toggle the day/year mode.
-            _handleModeChanged(
-              _mode == DatePickerMode.day
-                  ? DatePickerMode.year
-                  : DatePickerMode.day,
-            );
-          },
-        ),
-      ],
+    return Material(
+      elevation: 2,
+      borderRadius: BorderRadius.circular(8),
+      child: Stack(
+        children: <Widget>[
+          SizedBox(
+            height: _subHeaderHeight + _maxDayPickerHeight,
+            child: _buildPicker(),
+          ),
+          _DatePickerModeToggleButton(
+            mode: _mode,
+            title: NepaliDateFormat.yMMMM().format(_currentDisplayedMonthDate),
+            onTitlePressed: () {
+              // Toggle the day/year mode.
+              _handleModeChanged(
+                _mode == DatePickerMode.day
+                    ? DatePickerMode.year
+                    : DatePickerMode.day,
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }
@@ -388,30 +395,27 @@ class _DatePickerModeToggleButtonState
               button: true,
               child: Container(
                 height: _subHeaderHeight,
-                child: InkWell(
-                  onTap: widget.onTitlePressed,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Row(
-                      children: <Widget>[
-                        Flexible(
-                          child: Text(
-                            widget.title,
-                            overflow: TextOverflow.ellipsis,
-                            style: textTheme.titleSmall?.copyWith(
-                              color: controlColor,
-                            ),
-                          ),
-                        ),
-                        RotationTransition(
-                          turns: _controller,
-                          child: Icon(
-                            Icons.arrow_drop_down,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Row(
+                    children: <Widget>[
+                      Flexible(
+                        child: Text(
+                          widget.title,
+                          overflow: TextOverflow.ellipsis,
+                          style: textTheme.titleSmall?.copyWith(
                             color: controlColor,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      // RotationTransition(
+                      //   turns: _controller,
+                      //   child: Icon(
+                      //     Icons.arrow_drop_down,
+                      //     color: controlColor,
+                      //   ),
+                      // ),
+                    ],
                   ),
                 ),
               ),
@@ -786,6 +790,7 @@ class _MonthPickerState extends State<_MonthPicker> {
         children: <Widget>[
           Container(
             padding: const EdgeInsetsDirectional.only(start: 16, end: 4),
+            decoration: BoxDecoration(color: Color(0xffe4ece0)),
             height: _subHeaderHeight,
             child: Row(
               children: <Widget>[
@@ -1013,11 +1018,7 @@ class _DayPickerState extends State<_DayPicker> {
           // The selected day gets a circle background highlight, and a
           // contrasting text color.
           dayColor = selectedDayColor;
-          decoration = widget.selectedDayDecoration ??
-              BoxDecoration(
-                color: selectedDayBackground,
-                shape: BoxShape.circle,
-              );
+          decoration = widget.selectedDayDecoration;
         } else if (isDisabled) {
           dayColor = disabledDayColor;
         } else if (isToday) {
